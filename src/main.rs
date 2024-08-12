@@ -2,7 +2,7 @@ use std::io;
 
 use ratatui::{
     crossterm::{
-        event::{DisableMouseCapture, EnableMouseCapture},
+        event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode, KeyEventKind},
         execute,
         terminal::{
             self, disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen,
@@ -11,6 +11,7 @@ use ratatui::{
     prelude::{Backend, CrosstermBackend},
     Terminal,
 };
+use App::CurrentScreen;
 
 mod App;
 #[tokio::main]
@@ -44,5 +45,37 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 async fn run_app<B: Backend>(terminal: &mut Terminal<B>, app: &mut App::App) -> io::Result<bool> {
-    todo!()
+    loop {
+        terminal.draw(|f| ui(f, app))?;
+        if let Event::Key(key) = event::read()? {
+            if key.kind == KeyEventKind::Release {
+                continue;
+            }
+            match app.current_screen {
+                CurrentScreen::Main => match key.code {
+                    KeyCode::Char('g') => {
+                        app.current_screen = CurrentScreen::Get;
+                        app.currently_editing = Some(App::CurrentlyEditing::Value);
+                    }
+                    KeyCode::Char('p') => {
+                        app.current_screen = CurrentScreen::Post;
+                        app.currently_editing = Some(App::CurrentlyEditing::Value);
+                    }
+                    KeyCode::Char('q') => {
+                        app.current_screen = CurrentScreen::Exiting;
+                    }
+                    _ => {}
+                },
+                CurrentScreen::Exiting => match key.code {
+                    KeyCode::Char('y') => {
+                        return Ok(true);
+                    }
+                    KeyCode::Char('n') => {
+                        return Ok(false);
+                    }
+                    _ => {}
+                },
+            }
+        }
+    }
 }
