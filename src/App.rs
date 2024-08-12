@@ -10,7 +10,7 @@ pub enum CurrentlyEditing {
     Value,
 }
 
-struct App {
+pub struct App {
     pub key_input: String,
     pub value_input: String,
     pub url: String,
