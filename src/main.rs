@@ -11,9 +11,9 @@ use ratatui::{
     prelude::{Backend, CrosstermBackend},
     Terminal,
 };
-use App::CurrentScreen;
-
+use App::{CurrentScreen, CurrentlyEditing};
 mod App;
+mod ui;
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Preparing the terminal for capturing user input
@@ -75,6 +75,55 @@ async fn run_app<B: Backend>(terminal: &mut Terminal<B>, app: &mut App::App) -> 
                     }
                     _ => {}
                 },
+                CurrentScreen::Post if key.kind == KeyEventKind::Press => match key.code {
+                    KeyCode::Enter => {
+                        if let Some(editing) = &app.currently_editing {
+                            match editing {
+                                CurrentlyEditing::Key => {
+                                    app.currently_editing = Some(CurrentlyEditing::Value);
+                                }
+                                CurrentlyEditing::Value => {
+                                    app.save_key_value();
+                                    app.currently_editing = Some(CurrentlyEditing::Key);
+                                }
+                            }
+                        }
+                    }
+
+                    KeyCode::Backspace => {
+                        if let Some(editing) = &app.currently_editing {
+                            match editing {
+                                CurrentlyEditing::Key => {
+                                    app.key_input.pop();
+                                }
+                                CurrentlyEditing::Value => {
+                                    app.value_input.pop();
+                                }
+                            }
+                        }
+                    }
+                    KeyCode::Esc => {
+                        app.current_screen = CurrentScreen::Main;
+                        app.currently_editing = None;
+                    }
+                    KeyCode::Tab => {
+                        app.toggle_editing();
+                    }
+                    KeyCode::Char(value) => {
+                        if let Some(editing) = &app.currently_editing {
+                            match editing {
+                                CurrentlyEditing::Key => {
+                                    app.key_input.push(value);
+                                }
+                                CurrentlyEditing::Value => {
+                                    app.value_input.push(value);
+                                }
+                            }
+                        }
+                    }
+                    _ => {}
+                },
+                _ => {}
             }
         }
     }
