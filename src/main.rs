@@ -36,7 +36,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     terminal.show_cursor()?;
     Ok(())
 }
-async fn run_app<B: Backend>(terminal: &mut Terminal<B>, app: &mut App::App) -> io::Result<bool> {
+async fn run_app<B: Backend>(
+    terminal: &mut Terminal<B>,
+    app: &mut App::App,
+) -> Result<bool, Box<dyn std::error::Error>> {
     loop {
         terminal.draw(|f| ui(f, app))?;
         if let Event::Key(key) = event::read()? {
@@ -76,6 +79,7 @@ async fn run_app<B: Backend>(terminal: &mut Terminal<B>, app: &mut App::App) -> 
                                 }
                                 CurrentlyEditing::Value => {
                                     app.save_key_value();
+                                    app.post_req().await?;
                                     app.currently_editing = Some(CurrentlyEditing::Key);
                                 }
                             }

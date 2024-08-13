@@ -63,9 +63,9 @@ pub fn ui(frame: &mut Frame, app: &App) {
         // The first half of the text
         match app.current_screen {
             CurrentScreen::Main => Span::styled("Normal Mode", Style::default().fg(Color::Green)),
-            CurrentScreen::Post => Span::styled("Editing Mode", Style::default().fg(Color::Yellow)),
+            CurrentScreen::Post => Span::styled("Post", Style::default().fg(Color::Yellow)),
+            CurrentScreen::Get => Span::styled("Get", Style::default().fg(Color::Yellow)),
             CurrentScreen::Exiting => Span::styled("Exiting", Style::default().fg(Color::LightRed)),
-            _ => Span::styled("Exiting", Style::default().fg(Color::LightRed)),
         }
         .to_owned(),
         // A white divider bar to separate the two sections
@@ -92,19 +92,16 @@ pub fn ui(frame: &mut Frame, app: &App) {
     let current_keys_hint = {
         match app.current_screen {
             CurrentScreen::Main => Span::styled(
-                "(q) to quit / (e) to make new pair",
+                "(q) to quit / (p) to make a post request / (g) to make a get a request",
                 Style::default().fg(Color::Red),
             ),
             CurrentScreen::Post => Span::styled(
                 "(ESC) to cancel/(Tab) to switch boxes/enter to complete",
                 Style::default().fg(Color::Red),
             ),
-            CurrentScreen::Get => Span::styled(
-                "(ESC) to cancel/(Tab) to switch boxes/enter to complete",
-                Style::default().fg(Color::Red),
-            ),
+            CurrentScreen::Get => Span::styled("(ESC) to cancel/", Style::default().fg(Color::Red)),
             CurrentScreen::Exiting => Span::styled(
-                "(q) to quit / (e) to make new pair",
+                "(q) to quit / (p) to make a post request / (g) to make a get a request",
                 Style::default().fg(Color::Red),
             ),
         }
