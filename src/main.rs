@@ -35,13 +35,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         DisableMouseCapture
     )?;
     terminal.show_cursor()?;
-    if let Ok(pw_thanks) = res {
-        if pw_thanks {
-            println!("Thanks for using postwoman :)");
-        } else if let Err(err) = res {
-            println!("{:?}", err);
-        }
-    }
+    // if let Ok(pw_thanks) = res {
+    //     if pw_thanks {
+    //         println!("Thanks for using postwoman :)");
+    //     } else if let Err(err) = res {
+    //         println!("{:?}", err);
+    //     }
+    // }
     Ok(())
 }
 async fn run_app<B: Backend>(terminal: &mut Terminal<B>, app: &mut App::App) -> io::Result<bool> {
