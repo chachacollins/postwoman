@@ -4,13 +4,12 @@ use ratatui::{
     crossterm::{
         event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode, KeyEventKind},
         execute,
-        terminal::{
-            self, disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen,
-        },
+        terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
     },
     prelude::{Backend, CrosstermBackend},
     Terminal,
 };
+use ui::ui;
 use App::{CurrentScreen, CurrentlyEditing};
 mod App;
 mod ui;
@@ -25,7 +24,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut terminal = Terminal::new(backend)?;
 
     let mut app = App::App::new();
-    let res = run_app(&mut terminal, &mut app).await?;
+    let _res = run_app(&mut terminal, &mut app).await?;
 
     //Reverse whatever we have done to the terminal;
     disable_raw_mode()?;
@@ -35,13 +34,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         DisableMouseCapture
     )?;
     terminal.show_cursor()?;
-    // if let Ok(pw_thanks) = res {
-    //     if pw_thanks {
-    //         println!("Thanks for using postwoman :)");
-    //     } else if let Err(err) = res {
-    //         println!("{:?}", err);
-    //     }
-    // }
     Ok(())
 }
 async fn run_app<B: Backend>(terminal: &mut Terminal<B>, app: &mut App::App) -> io::Result<bool> {
