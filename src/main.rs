@@ -82,6 +82,9 @@ async fn run_app<B: Backend>(
                                     app.post_req().await?;
                                     app.currently_editing = Some(CurrentlyEditing::Key);
                                 }
+                                CurrentlyEditing::Url => {
+                                    app.currently_editing = Some(CurrentlyEditing::Key);
+                                }
                             }
                         }
                     }
@@ -94,6 +97,9 @@ async fn run_app<B: Backend>(
                                 }
                                 CurrentlyEditing::Value => {
                                     app.value_input.pop();
+                                }
+                                CurrentlyEditing::Url => {
+                                    app.url.pop();
                                 }
                             }
                         }
@@ -114,8 +120,26 @@ async fn run_app<B: Backend>(
                                 CurrentlyEditing::Value => {
                                     app.value_input.push(value);
                                 }
+                                CurrentlyEditing::Url => {
+                                    app.url.push(value);
+                                }
                             }
                         }
+                    }
+                    _ => {}
+                },
+                CurrentScreen::Get if key.kind == KeyEventKind::Press => match key.code {
+                    KeyCode::Enter => {
+                        app.get_req().await?;
+                    }
+                    KeyCode::Backspace => {
+                        app.url.pop();
+                    }
+                    KeyCode::Esc => {
+                        app.current_screen = CurrentScreen::Main;
+                    }
+                    KeyCode::Char(value) => {
+                        app.url.push(value);
                     }
                     _ => {}
                 },
