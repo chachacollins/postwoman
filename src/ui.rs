@@ -80,6 +80,9 @@ pub fn ui(frame: &mut Frame, app: &App) {
                     CurrentlyEditing::Value => {
                         Span::styled("Editing Json Value", Style::default().fg(Color::LightGreen))
                     }
+                    CurrentlyEditing::Url => {
+                        Span::styled("Editing URL", Style::default().fg(Color::LightBlue))
+                    }
                 }
             } else {
                 Span::styled("Not Editing Anything", Style::default().fg(Color::DarkGray))
@@ -92,7 +95,7 @@ pub fn ui(frame: &mut Frame, app: &App) {
     let current_keys_hint = {
         match app.current_screen {
             CurrentScreen::Main => Span::styled(
-                "(q) to quit / (p) to make a post request / (g) to make a get a request",
+                "(q) quit / (p) post/ (g) get",
                 Style::default().fg(Color::Red),
             ),
             CurrentScreen::Post => Span::styled(
@@ -100,10 +103,7 @@ pub fn ui(frame: &mut Frame, app: &App) {
                 Style::default().fg(Color::Red),
             ),
             CurrentScreen::Get => Span::styled("(ESC) to cancel/", Style::default().fg(Color::Red)),
-            CurrentScreen::Exiting => Span::styled(
-                "(q) to quit / (p) to make a post request / (g) to make a get a request",
-                Style::default().fg(Color::Red),
-            ),
+            CurrentScreen::Exiting => Span::styled("(q) to quit", Style::default().fg(Color::Red)),
         }
     };
 
@@ -138,6 +138,7 @@ pub fn ui(frame: &mut Frame, app: &App) {
         match editing {
             CurrentlyEditing::Key => key_block = key_block.style(active_style),
             CurrentlyEditing::Value => value_block = value_block.style(active_style),
+            CurrentlyEditing::Url => value_block = value_block.style(active_style),
         };
 
         let key_text = Paragraph::new(app.key_input.clone()).block(key_block);
