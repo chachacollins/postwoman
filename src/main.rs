@@ -137,6 +137,7 @@ async fn run_app<B: Backend>(
                     }
                     KeyCode::Esc => {
                         app.current_screen = CurrentScreen::Main;
+                        app.currently_editing = None;
                     }
                     KeyCode::Char(value) => {
                         app.url.push(value);
