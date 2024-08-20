@@ -1,6 +1,6 @@
 use ratatui::{
     layout::{self, Constraint, Layout, Rect},
-    style::{Color, Style},
+    style::{Color, Style, Styled},
     text::{Line, Span, Text},
     widgets::{Block, Borders, Clear, List, ListItem, Paragraph, Wrap},
     Frame,
@@ -125,7 +125,7 @@ pub fn ui(frame: &mut Frame, app: &App) {
                 .borders(Borders::NONE)
                 .style(Style::default().bg(Color::DarkGray));
 
-            let area = centered_rect(60, 25, frame.area());
+            let area = centered_rect(60, 65, frame.area());
             frame.render_widget(popup_block, area);
             let popup_chunks = Layout::default()
                 .direction(layout::Direction::Horizontal)
@@ -140,7 +140,7 @@ pub fn ui(frame: &mut Frame, app: &App) {
             match editing {
                 CurrentlyEditing::Key => key_block = key_block.style(active_style),
                 CurrentlyEditing::Value => value_block = value_block.style(active_style),
-                CurrentlyEditing::Url => value_block = value_block.style(active_style),
+                _ => {}
             };
 
             let key_text = Paragraph::new(app.key_input.clone()).block(key_block);
