@@ -79,7 +79,6 @@ async fn run_app<B: Backend>(
                                 }
                                 CurrentlyEditing::Value => {
                                     app.save_key_value();
-                                    app.post_req().await?;
                                     app.currently_editing = Some(CurrentlyEditing::Key);
                                 }
                                 CurrentlyEditing::Url => {
@@ -89,6 +88,9 @@ async fn run_app<B: Backend>(
                         }
                     }
 
+                    KeyCode::Tab => {
+                        app.post_req().await?;
+                    }
                     KeyCode::Backspace => {
                         if let Some(editing) = &app.currently_editing {
                             match editing {
@@ -108,7 +110,7 @@ async fn run_app<B: Backend>(
                         app.current_screen = CurrentScreen::Main;
                         app.currently_editing = None;
                     }
-                    KeyCode::Tab => {
+                    KeyCode::Up => {
                         app.toggle_editing();
                     }
                     KeyCode::Char(value) => {
