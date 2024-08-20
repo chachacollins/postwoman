@@ -1,6 +1,6 @@
 use ratatui::{
     layout::{self, Constraint, Layout, Rect},
-    style::{Color, Style, Styled},
+    style::{Color, Style},
     text::{Line, Span, Text},
     widgets::{Block, Borders, Clear, List, ListItem, Paragraph, Wrap},
     Frame,
@@ -47,18 +47,18 @@ pub fn ui(frame: &mut Frame, app: &App) {
     .block(title_block);
     frame.render_widget(title, chunks[0]);
     // list already put key value pairs
-    let mut list_items = Vec::<ListItem>::new();
+    // let mut list_items = Vec::<ListItem>::new();
+    //
+    // for key in app.pairs.keys() {
+    //     list_items.push(ListItem::new(Line::from(Span::styled(
+    //         format!("{: <25} : {}", key, app.pairs.get(key).unwrap()),
+    //         Style::default().fg(ratatui::style::Color::Yellow),
+    //     ))));
+    // }
+    //
+    // let list = List::new(list_items);
 
-    for key in app.pairs.keys() {
-        list_items.push(ListItem::new(Line::from(Span::styled(
-            format!("{: <25} : {}", key, app.pairs.get(key).unwrap()),
-            Style::default().fg(ratatui::style::Color::Yellow),
-        ))));
-    }
-
-    let list = List::new(list_items);
-
-    frame.render_widget(list, chunks[1]);
+    // frame.render_widget(list, chunks[1]);
     let current_navigation_text = vec![
         // The first half of the text
         match app.current_screen {
@@ -102,7 +102,7 @@ pub fn ui(frame: &mut Frame, app: &App) {
                 "(ESC) to cancel/(Tab) to switch boxes/enter to complete",
                 Style::default().fg(Color::Red),
             ),
-            CurrentScreen::Get => Span::styled("(ESC) to cancel/", Style::default().fg(Color::Red)),
+            CurrentScreen::Get => Span::styled("(ESC) to cancel", Style::default().fg(Color::Red)),
             CurrentScreen::Exiting => Span::styled("(q) to quit", Style::default().fg(Color::Red)),
         }
     };
@@ -169,6 +169,34 @@ pub fn ui(frame: &mut Frame, app: &App) {
     if let CurrentScreen::Get = app.current_screen {
         //url mf
         url_displayer(frame, app);
+        let chunks = Layout::default()
+            .direction(ratatui::layout::Direction::Vertical)
+            .constraints([
+                Constraint::Length(3),
+                Constraint::Length(3),
+                Constraint::Min(1),
+                Constraint::Length(3),
+            ])
+            .split(frame.area());
+        let mut list_items = Vec::<ListItem>::new();
+
+        // for key in app.pairs.keys() {
+        //     list_items.push(ListItem::new(Line::from(Span::styled(
+        //         format!("{: <25} : {}", key, app.pairs.get(key).unwrap()),
+        //         Style::default().fg(ratatui::style::Color::Yellow),
+        //     ))));
+        // }
+        let get_req = &app.get_req;
+        for i in 0..get_req.len() {
+            list_items.push(ListItem::new(Line::from(Span::styled(
+                format!("{:? }", get_req[i]),
+                Style::default().fg(ratatui::style::Color::Yellow),
+            ))))
+        }
+
+        let list = List::new(list_items);
+
+        frame.render_widget(list, chunks[2]);
     }
 }
 fn url_displayer(frame: &mut Frame, app: &App) {

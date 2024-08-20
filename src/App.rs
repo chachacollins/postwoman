@@ -15,7 +15,7 @@ pub struct App {
     pub key_input: String,
     pub value_input: String,
     pub url: String,
-    pub req_body: Vec<String>,
+    pub get_req: Vec<String>,
     pub pairs: HashMap<String, String>,
     pub current_screen: CurrentScreen,
     pub currently_editing: Option<CurrentlyEditing>, // t
@@ -27,7 +27,7 @@ impl App {
             value_input: String::new(),
             pairs: HashMap::new(),
             url: String::new(),
-            req_body: Vec::new(),
+            get_req: Vec::new(),
             current_screen: CurrentScreen::Main,
             currently_editing: None,
         }
@@ -61,7 +61,7 @@ impl App {
     }
     pub async fn get_req(&mut self) -> Result<(), Box<dyn std::error::Error>> {
         let body = reqwest::get(&self.url).await?.text().await?;
-        let _ = &self.req_body.push(body);
+        let _ = &self.get_req.push(body);
 
         Ok(())
     }
