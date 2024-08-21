@@ -8,12 +8,14 @@ pub enum CurrentScreen {
 pub enum CurrentlyEditing {
     Key,
     Value,
+    Url,
 }
 
 pub struct App {
     pub key_input: String,
     pub value_input: String,
     pub url: String,
+    pub get_req: Vec<String>,
     pub pairs: HashMap<String, String>,
     pub current_screen: CurrentScreen,
     pub currently_editing: Option<CurrentlyEditing>, // t
@@ -25,6 +27,7 @@ impl App {
             value_input: String::new(),
             pairs: HashMap::new(),
             url: String::new(),
+            get_req: Vec::new(),
             current_screen: CurrentScreen::Main,
             currently_editing: None,
         }
@@ -42,21 +45,23 @@ impl App {
         if let Some(edit_mode) = &self.currently_editing {
             match edit_mode {
                 CurrentlyEditing::Key => self.currently_editing = Some(CurrentlyEditing::Value),
-                CurrentlyEditing::Value => self.currently_editing = Some(CurrentlyEditing::Key),
+                CurrentlyEditing::Value => self.currently_editing = Some(CurrentlyEditing::Url),
+                CurrentlyEditing::Url => self.currently_editing = Some(CurrentlyEditing::Key),
             };
         } else {
             self.currently_editing = Some(CurrentlyEditing::Key);
         }
     }
     pub async fn post_req(&self) -> Result<(), Box<dyn std::error::Error>> {
-        let output = serde_json::to_string(&self.pairs)?;
         let client = reqwest::Client::new();
-        let res = client.post(&self.url).json(&output).send().await?;
+        let _res = client.post(&self.url).json(&self.pairs).send().await?;
 
         Ok(())
     }
-    pub async fn get_req(&self) -> Result<(), Box<dyn std::error::Error>> {
+    pub async fn get_req(&mut self) -> Result<(), Box<dyn std::error::Error>> {
         let body = reqwest::get(&self.url).await?.text().await?;
+        let _ = &self.get_req.push(body);
+
         Ok(())
     }
 }
