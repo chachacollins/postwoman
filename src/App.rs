@@ -53,9 +53,6 @@ impl App {
         }
     }
     pub async fn post_req(&self) -> Result<(), Box<dyn std::error::Error>> {
-        let output = serde_json::to_string(&self.pairs)?;
-        println!("raw output {:?}", &self.pairs);
-        println!("json output{:?}", output);
         let client = reqwest::Client::new();
         let _res = client.post(&self.url).json(&self.pairs).send().await?;
 
