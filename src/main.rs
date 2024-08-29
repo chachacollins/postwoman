@@ -89,7 +89,13 @@ async fn run_app<B: Backend>(
                     }
 
                     KeyCode::Tab => {
-                        app.post_req().await?;
+                        let post_req = app.post_req().await.map_err(|er| {
+                            app.error_handle(er);
+                        });
+                        if let Ok(post) = post_req {
+                            let _ = post;
+                            continue;
+                        }
                     }
                     KeyCode::Backspace => {
                         if let Some(editing) = &app.currently_editing {

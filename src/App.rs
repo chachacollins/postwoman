@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, error};
 pub enum CurrentScreen {
     Main,
     Get,
@@ -18,7 +18,8 @@ pub struct App {
     pub get_req: Vec<String>,
     pub pairs: HashMap<String, String>,
     pub current_screen: CurrentScreen,
-    pub currently_editing: Option<CurrentlyEditing>, // t
+    pub currently_editing: Option<CurrentlyEditing>,
+    pub error_mess: Vec<Box<dyn error::Error>>,
 }
 impl App {
     pub fn new() -> App {
@@ -27,6 +28,7 @@ impl App {
             value_input: String::new(),
             pairs: HashMap::new(),
             url: String::new(),
+            error_mess: Vec::new(),
             get_req: Vec::new(),
             current_screen: CurrentScreen::Main,
             currently_editing: None,
@@ -63,5 +65,8 @@ impl App {
         let _ = &self.get_req.push(body);
 
         Ok(())
+    }
+    pub fn error_handle(&mut self, err: Box<dyn error::Error>) {
+        self.error_mess.push(err);
     }
 }
